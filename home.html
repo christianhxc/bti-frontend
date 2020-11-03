@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>Equinix - Breaking the Ice</title>
+	</head>
+	<body>
+	    <h1>Recommended Movies to Watch!</h1>
+	    
+		{{range .Movies}}<div>{{ .Title }} ({{ .Year }}) - {{ .Info.Rating }}</div>{{else}}<div><strong>No movies to watch!</strong></div>{{end}}
+	</body>
+</html>

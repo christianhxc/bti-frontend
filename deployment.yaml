@@ -1,0 +1,48 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: bti-settings
+data:
+  bti-backend: "http://internal-af94a083c73de409aa2e4ae804b20d19-1989500349.us-west-1.elb.amazonaws.com"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: bti-frontend
+  labels:
+    app: bti-frontend
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: bti-frontend
+  template:
+    metadata:
+      labels:
+        app: bti-frontend
+    spec:
+      containers:
+      - name: server
+        image: gcr.io/bti-smartkey/bti-frontend:1.0
+        imagePullPolicy: Always
+        env:
+        - name: BTI_BACKEND_ENDPOINT
+          valueFrom:
+            configMapKeyRef:
+              name: bti-settings
+              key: bti-backend
+        ports:
+        - containerPort: 8080
+          name: bti-frontend
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: bti-frontend
+spec:
+  type: LoadBalancer
+  selector:
+    app: bti-frontend
+  ports:
+    - port: 80
+      targetPort: bti-frontend
